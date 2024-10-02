@@ -1,0 +1,173 @@
+Imports System.Data.OleDb 
+Imports System.Data 
+Public Class Form1 
+Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click 
+Dim uname As String 
+Dim pword As String 
+        Dim pass As String 
+        If TextBox1.Text = "" Or TextBox2.Text = "" Then 
+            MsgBox("Please enter User name and Password!") 
+        Else 
+            uname = TextBox1.Text 
+            pword = TextBox2.Text 
+ 
+            Dim querry As String = "Select Password From Table1 where name = '" & uname & 
+"' ;" 
+            Dim dbsource As String = "Provider=Microsoft.ACE.OLEDB.12.0;Data 
+Source=|DataDirectory|\GAD Project.accdb" 
+            Dim conn = New OleDbConnection(dbsource) 'New Connection is established 
+            Dim cmd As New OleDbCommand(querry, conn) 
+            conn.Open() 
+ 
+            'Exception Handling 
+            Try 
+                pass = cmd.ExecuteScalar().ToString 
+ 
+            Catch ex As Exception 
+                MsgBox("User name Does Not Exist") 
+ 
+            End Try 
+ 
+            If (pword = pass) Then 
+                MsgBox("Login Success") 
+                Form2.Show() 
+                If Form2.Visible Then 
+                    Me.Hide() 
+                End If 
+            Else 
+                MsgBox("Login Failed") 
+                TextBox1.Clear() 
+                TextBox2.Clear() 
+            End If 
+        End If 
+    End Sub 
+ 
+    Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click 
+        TextBox1.Clear() 
+        TextBox2.Clear() 
+    End Sub 
+End Class 
+ 
+'Form 2:' 
+ 
+Public Class Form2 
+    Private Sub Form2_Load(sender As Object, e As EventArgs) Handles MyBase.Load 
+        'TODO: This line of code loads data into the 'StudentDataSet.Student' table. You 
+can move, or remove it, as needed. 
+        Me.StudentDBTableAdapter.Fill(Me.StudentGADDBDataSet.StudentDB) 
+ 
+ 
+    End Sub 
+ 
+ 
+ 
+    Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click 
+        StudentDBBindingSource.AddNew() 
+ 
+    End Sub 
+ 
+    Private Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click 
+        If TextBox1.Text = "" Then 
+            MsgBox("Please Enter Roll Number") 
+        ElseIf TextBox2.Text = "" Then 
+            MsgBox("Please Enter Your Name") 
+        ElseIf ComboBox2.Text = "" Then 
+            MsgBox("Please Select Appropiate Course!") 
+        Else 
+ 
+ 
+            On Error GoTo saveerror 
+ 
+            StudentDBBindingSource.EndEdit() 
+            StudentDBTableAdapter.Update(StudentGADDBDataSet.StudentDB) 
+ 
+            Me.StudentDBTableAdapter.Fill(Me.StudentGADDBDataSet.StudentDB) 
+saveerror: 
+        End If 
+    End Sub 
+ 
+    Private Sub Button4_Click(sender As Object, e As EventArgs) Handles Button4.Click 
+ 
+        StudentDBBindingSource.RemoveCurrent() 
+ 
+ 
+    End Sub 
+ 
+    Private Sub Button5_Click(sender As Object, e As EventArgs) Handles Button5.Click 
+        StudentDBBindingSource.MovePrevious() 
+ 
+    End Sub 
+ 
+    Private Sub Button6_Click(sender As Object, e As EventArgs) Handles Button6.Click 
+        StudentDBBindingSource.MoveNext() 
+ 
+ 
+    End Sub 
+ 
+    Private Sub Button2_LostFocus(sender As Object, e As EventArgs) Handles 
+Button2.LostFocus 
+        Form1.Show() 
+    End Sub 
+ 
+    Private Sub Button7_Click(sender As Object, e As EventArgs) Handles Button7.Click 
+        Me.Close() 
+        Form1.Close() 
+    End Sub 
+ 
+    Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click 
+        Form3.Show() 
+        If Form3.Visible Then 
+            Me.Hide() 
+        End If 
+    End Sub 
+ 
+End Class 
+ 
+'Form 3: '
+Public Class Form3 
+    Private Sub Form3_Load(sender As Object, e As EventArgs) Handles MyBase.Load 
+        'TODO: This line of code loads data into the 'StudentGADDBDataSet.StudentDB' 
+table. You can move, or remove it, as needed. 
+        Me.StudentDBTableAdapter.Fill(Me.StudentGADDBDataSet.StudentDB) 
+ 
+    End Sub 
+ 
+    Private Sub FillBy3ToolStripButton_Click(sender As Object, e As EventArgs) Handles 
+FillBy3ToolStripButton.Click 
+        Try 
+            Me.StudentDBTableAdapter.FillBy3(Me.StudentGADDBDataSet.StudentDB, 
+CourseToolStripTextBox.Text) 
+        Catch ex As System.Exception 
+            System.Windows.Forms.MessageBox.Show(ex.Message) 
+        End Try 
+ 
+    End Sub 
+ 
+ 
+    Private Sub FillByToolStripButton_Click(sender As Object, e As EventArgs) Handles 
+FillByToolStripButton.Click 
+        Try 
+            Me.StudentDBTableAdapter.FillBy(Me.StudentGADDBDataSet.StudentDB, 
+SnameToolStripTextBox.Text) 
+        Catch ex As System.Exception 
+            System.Windows.Forms.MessageBox.Show(ex.Message) 
+        End Try 
+ 
+    End Sub 
+ 
+    Private Sub FillBy1ToolStripButton_Click(sender As Object, e As EventArgs) Handles 
+FillBy1ToolStripButton.Click 
+        Try 
+            Me.StudentDBTableAdapter.FillBy1(Me.StudentGADDBDataSet.StudentDB, New 
+System.Nullable(Of Integer)(CType(Roll_NoToolStripTextBox.Text, Integer))) 
+        Catch ex As System.Exception 
+            System.Windows.Forms.MessageBox.Show(ex.Message) 
+        End Try 
+ 
+    End Sub 
+ 
+    Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click 
+        Me.Hide() 
+        Form2.Show() 
+    End Sub 
+End Class 
